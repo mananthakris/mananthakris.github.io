@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Malathi Ananthakrishnan, Building applied AI and engineering organizations</title>
+  <meta name="description" content="Notes, projects, and experiments at the intersection of applied AI, distributed systems, and engineering leadership." />
+  <meta property="og:title" content="Malathi Ananthakrishnan, Building applied AI and engineering organizations" />
+  <meta property="og:description" content="Notes, projects, and experiments at the intersection of applied AI, distributed systems, and engineering leadership." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90' font-family='serif' font-style='italic'%3EM%3C/text%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=JetBrains+Mono:wght@400;500&family=Inter+Tight:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --ink: #0e1525;
+      --ink-soft: #1a2238;
+      --paper: #f4efe6;
+      --paper-warm: #ebe3d4;
+      --rule: rgba(14, 21, 37, 0.12);
+      --accent: #c2410c;
+      --accent-soft: #e07a3c;
+      --muted: #5b6478;
+      --serif: 'Fraunces', 'Times New Roman', serif;
+      --sans: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-size: 17px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.35;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(14,21,37,0.03) 0%, transparent 55%),
+        radial-gradient(circle at 85% 75%, rgba(194,65,12,0.025) 0%, transparent 55%);
+      mix-blend-mode: multiply;
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0.05;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/></filter><rect width='180' height='180' filter='url(%23n)' opacity='0.55'/></svg>");
+    }
+
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 32px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .topbar {
+      padding: 26px 0;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    .topbar .mark {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 500;
+      font-size: 19px;
+      letter-spacing: -0.01em;
+    }
+
+    .topbar nav { display: flex; gap: 28px; }
+    .topbar nav a {
+      color: var(--ink);
+      text-decoration: none;
+      position: relative;
+      transition: color 0.2s ease;
+    }
+    .topbar nav a:hover { color: var(--accent); }
+    .topbar nav a::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: -5px;
+      width: 0; height: 1px;
+      background: var(--accent);
+      transition: width 0.25s ease;
+    }
+    .topbar nav a:hover::after { width: 100%; }
+
+    .hero { padding: 90px 0 110px; position: relative; }
+
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 44px;
+    }
+    .meta-row .accent { color: var(--accent); font-weight: 500; }
+
+    .hero h1 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(48px, 8.5vw, 124px);
+      line-height: 0.94;
+      letter-spacing: -0.035em;
+      margin-bottom: 40px;
+      font-variation-settings: "opsz" 144;
+    }
+    .hero h1 em { font-style: italic; font-weight: 400; color: var(--accent); }
+    .hero h1 .stroke { -webkit-text-stroke: 1.5px var(--ink); color: transparent; }
+
+    .hero .lede {
+      max-width: 680px;
+      font-size: 21px;
+      line-height: 1.5;
+      color: var(--ink-soft);
+      margin-bottom: 52px;
+    }
+    .hero .lede strong {
+      font-weight: 500;
+      color: var(--ink);
+      background: linear-gradient(transparent 64%, rgba(194,65,12,0.18) 64%);
+      padding: 0 2px;
+    }
+
+    .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 22px;
+      border-radius: 2px;
+      font-family: var(--sans);
+      font-weight: 500;
+      font-size: 14px;
+      letter-spacing: 0.01em;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+    .btn-primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+    .btn-primary:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-1px); }
+    .btn-ghost { background: transparent; color: var(--ink); border-color: var(--ink); }
+    .btn-ghost:hover { background: var(--ink); color: var(--paper); }
+    .btn .arrow { transition: transform 0.2s ease; }
+    .btn:hover .arrow { transform: translateX(3px); }
+
+    .section { padding: 100px 0; border-top: 1px solid var(--rule); position: relative; }
+
+    .section-label {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 52px;
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .section-label .num { color: var(--accent); font-weight: 500; }
+    .section-label .rule { flex: 1; height: 1px; background: var(--rule); }
+
+    .section-title {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(34px, 5vw, 60px);
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      margin-bottom: 24px;
+      max-width: 880px;
+    }
+    .section-title em { font-style: italic; font-weight: 400; color: var(--accent); }
+
+    .section-intro {
+      max-width: 660px;
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--ink-soft);
+      margin-bottom: 64px;
+    }
+
+    .about-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: start; }
+    .about-aside { position: sticky; top: 40px; }
+
+    .pull-quote {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 300;
+      font-size: 28px;
+      line-height: 1.3;
+      color: var(--ink);
+      margin-bottom: 32px;
+      padding-left: 24px;
+      border-left: 2px solid var(--accent);
+    }
+    .pull-quote span { color: var(--accent); }
+
+    .about-meta {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      line-height: 2;
+    }
+    .about-meta div span { color: var(--ink); }
+
+    .about-prose p {
+      font-size: 18px;
+      line-height: 1.65;
+      color: var(--ink-soft);
+      margin-bottom: 22px;
+    }
+    .about-prose p strong { font-weight: 500; color: var(--ink); }
+
+    .now-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      border-top: 1px solid var(--ink);
+      border-bottom: 1px solid var(--rule);
+    }
+    .now-cell { padding: 36px 32px; border-right: 1px solid var(--rule); }
+    .now-cell:last-child { border-right: none; }
+
+    .now-cell .label {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+      display: block;
+    }
+    .now-cell h4 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 22px;
+      line-height: 1.25;
+      letter-spacing: -0.015em;
+      margin-bottom: 10px;
+    }
+    .now-cell p { font-size: 14.5px; line-height: 1.55; color: var(--muted); }
+
+    .projects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+
+    .project-card {
+      background: var(--paper-warm);
+      padding: 36px 36px 32px;
+      border: 1px solid var(--rule);
+      border-radius: 3px;
+      position: relative;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      min-height: 320px;
+    }
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 0; height: 2px;
+      background: var(--accent);
+      transition: width 0.4s ease;
+    }
+    .project-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 40px -20px rgba(14, 21, 37, 0.18);
+    }
+    .project-card:hover::before { width: 100%; }
+
+    .project-tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    .project-card h4 {
+      font-family: var(--serif);
+      font-weight: 400;
+      font-size: 26px;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+    }
+
+    .project-card p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--ink-soft);
+      margin-bottom: 24px;
+      flex: 1;
+    }
+
+    .project-stack { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+    .stack-chip {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      letter-spacing: 0.04em;
+      padding: 4px 9px;
+      background: rgba(14, 21, 37, 0.06);
+      color: var(--ink);
+      border-radius: 2px;
+    }
+
+    .project-link {
+      font-family: var(--mono);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      color: var(--ink);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      align-self: flex-start;
+      border-bottom: 1px solid var(--ink);
+      padding-bottom: 2px;
+      transition: all 0.2s ease;
+    }
+    .project-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
+    .project-link:hover .arrow { transform: translateX(3px); }
+
+    .themes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 56px; }
+
+    .theme h4 {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 24px;
+      letter-spacing: -0.01em;
+      margin-bottom: 16px;
+      color: var(--accent);
+    }
+    .theme p { font-size: 15.5px; line-height: 1.6; color: var(--ink-soft); }
+
+    .teaser {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 96px 64px;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+      margin-top: 40px;
+    }
+
+    .teaser::before {
+      content: '';
+      position: absolute;
+      top: -120px; right: -120px;
+      width: 380px; height: 380px;
+      background: radial-gradient(circle, var(--accent) 0%, transparent 65%);
+      opacity: 0.35;
+    }
+
+    .teaser-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent-soft);
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    .teaser h3 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(32px, 4.5vw, 52px);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+      max-width: 800px;
+      position: relative;
+    }
+    .teaser h3 em { font-style: italic; font-weight: 400; color: var(--accent-soft); }
+
+    .teaser p {
+      max-width: 580px;
+      font-size: 17px;
+      line-height: 1.6;
+      color: rgba(244, 239, 230, 0.78);
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .teaser .btn-light {
+      background: var(--paper);
+      color: var(--ink);
+      border-color: var(--paper);
+      position: relative;
+    }
+    .teaser .btn-light:hover { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+
+    .connect { padding: 110px 0 60px; border-top: 1px solid var(--rule); }
+
+    .connect h2 {
+      font-family: var(--serif);
+      font-weight: 300;
+      font-size: clamp(44px, 7vw, 96px);
+      line-height: 0.98;
+      letter-spacing: -0.035em;
+      margin-bottom: 24px;
+    }
+    .connect h2 em { font-style: italic; font-weight: 400; color: var(--accent); }
+
+    .connect-intro {
+      max-width: 600px;
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--ink-soft);
+      margin-bottom: 56px;
+    }
+
+    .connect-links {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+      max-width: 720px;
+      margin-bottom: 80px;
+    }
+
+    .connect-link {
+      display: flex;
+      flex-direction: column;
+      padding: 24px 0;
+      border-top: 1px solid var(--rule);
+      text-decoration: none;
+      color: var(--ink);
+      transition: padding 0.2s ease;
+    }
+    .connect-link:hover { padding-left: 12px; }
+
+    .connect-link .label {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .connect-link .value {
+      font-family: var(--serif);
+      font-size: 22px;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+      transition: color 0.2s ease;
+    }
+    .connect-link:hover .value { color: var(--accent); }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 40px;
+      border-top: 1px solid var(--rule);
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero h1, .hero .lede, .hero .meta-row, .hero-ctas {
+      animation: fadeUp 0.8s ease forwards;
+      opacity: 0;
+    }
+    .hero .meta-row { animation-delay: 0.05s; }
+    .hero h1 { animation-delay: 0.15s; }
+    .hero .lede { animation-delay: 0.45s; }
+    .hero-ctas { animation-delay: 0.6s; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 920px) {
+      .container { padding: 0 24px; }
+      .topbar nav { gap: 18px; font-size: 11px; }
+      .topbar nav a:not(:first-child):not(:last-child) { display: none; }
+      .hero { padding: 60px 0 80px; }
+      .section { padding: 70px 0; }
+      .about-grid { grid-template-columns: 1fr; gap: 40px; }
+      .about-aside { position: static; }
+      .now-strip { grid-template-columns: 1fr; }
+      .now-cell { border-right: none; border-bottom: 1px solid var(--rule); }
+      .now-cell:last-child { border-bottom: none; }
+      .projects-grid { grid-template-columns: 1fr; }
+      .themes { grid-template-columns: 1fr; gap: 32px; }
+      .teaser { padding: 60px 32px; }
+      .connect-links { grid-template-columns: 1fr; }
+      .pull-quote { font-size: 22px; }
+      footer { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grain"></div>
+
+  <div class="container">
+    <header class="topbar">
+      <span class="mark">M. Ananthakrishnan</span>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#now">Now</a>
+        <a href="#projects">Projects</a>
+        <a href="#themes">Themes</a>
+        <a href="#connect">Connect</a>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="meta-row">
+        <span>Notebook · 2026</span>
+        <span class="accent">● Building in the open</span>
+        <span>Austin, TX</span>
+      </div>
+
+      <h1>
+        Building <em>applied AI.</em><br/>
+        Building <span class="stroke">teams.</span><br/>
+        Thinking <em>out loud</em>.
+      </h1>
+
+      <p class="lede">
+        I'm an engineering leader exploring the intersection of <strong>applied AI, distributed systems, and the organizations that build them</strong>. This is where I share the projects I'm building, the systems I'm learning from, and the ideas I'm working through.
+      </p>
+
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="#projects">
+          See what I'm building <span class="arrow">→</span>
+        </a>
+        <a class="btn btn-ghost" href="https://github.com/mananthakris" target="_blank" rel="noopener">
+          GitHub <span class="arrow">↗</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="section reveal" id="about">
+      <div class="section-label">
+        <span class="num">01</span>
+        <span>About</span>
+        <span class="rule"></span>
+        <span>The shape of the work</span>
+      </div>
+
+      <div class="about-grid">
+        <aside class="about-aside">
+          <p class="pull-quote">
+            The work I care about sits at the seam where <span>architecture, organizations, and product reality</span> meet.
+          </p>
+          <div class="about-meta">
+            <div>Based · <span>Austin, Texas</span></div>
+            <div>Focus · <span>Applied AI &amp; Platform</span></div>
+            <div>Domains · <span>PropTech, Telecom, EdTech</span></div>
+            <div>Background · <span>20 years in engineering</span></div>
+          </div>
+        </aside>
+
+        <div class="about-prose">
+          <p>
+            I've spent two decades building <strong>distributed systems</strong> and the <strong>engineering organizations that ship them</strong>, across enterprise, growth-stage, and startup environments. The arc of my work has moved from scaling infrastructure, to scaling teams, to scaling intelligence into the systems we already operate.
+          </p>
+          <p>
+            Lately that means <strong>applied AI in the wild</strong>: agentic systems with real evals, RAG pipelines that hold up under production load, and MLOps work that closes the loop between training and monitoring. I'm especially interested in the parts that don't show up in demos. Boundary design between agents. Evaluation as an engineering discipline. The org structures that make AI delivery durable rather than performative.
+          </p>
+          <p>
+            This site is where I keep that work in the open. Some of it is finished. Most of it is in motion. <strong>That's the point.</strong>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="now">
+      <div class="section-label">
+        <span class="num">02</span>
+        <span>Now</span>
+        <span class="rule"></span>
+        <span>What I'm working on</span>
+      </div>
+
+      <h2 class="section-title">
+        A snapshot of <em>current threads</em>.
+      </h2>
+      <p class="section-intro">
+        Inspired by the <em>now page</em> tradition. A look at what's actively occupying my attention, updated as the work shifts.
+      </p>
+
+      <div class="now-strip">
+        <div class="now-cell">
+          <span class="label">Building</span>
+          <h4>Multi-agent systems with real evals</h4>
+          <p>Exploring orchestration patterns across MCP, A2A communication, and skills frameworks, along with the eval scaffolding that keeps them honest.</p>
+        </div>
+        <div class="now-cell">
+          <span class="label">Studying</span>
+          <h4>The shape of production-grade RAG</h4>
+          <p>Embeddings fine-tuning, retrieval evaluation, and the gap between a RAG demo that works and a RAG system that holds up.</p>
+        </div>
+        <div class="now-cell">
+          <span class="label">Writing</span>
+          <h4>Notes for engineering leaders</h4>
+          <p>Drafting essays at the intersection of org design and applied AI delivery, for a newsletter launching soon.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="projects">
+      <div class="section-label">
+        <span class="num">03</span>
+        <span>Projects</span>
+        <span class="rule"></span>
+        <span>In the open</span>
+      </div>
+
+      <h2 class="section-title">
+        Building <em>in public</em>.
+      </h2>
+      <p class="section-intro">
+        These are systems I'm shipping to learn: agentic apps, RAG pipelines, and the MLOps infrastructure underneath. Code is on GitHub. Thinking is in the READMEs and (soon) the newsletter.
+      </p>
+
+      <div class="projects-grid">
+
+        <article class="project-card">
+          <span class="project-tag">MLOps · Continuous Training</span>
+          <h4>MLOps Continuous Training &amp; Monitoring</h4>
+          <p>
+            End-to-end MLOps pipeline closing the loop between training, evaluation, deployment, and drift monitoring. An exploration of what it takes to make production ML maintainable instead of a one-time launch, the discipline that separates demos from durable systems.
+          </p>
+          <div class="project-stack">
+            <span class="stack-chip">Python</span>
+            <span class="stack-chip">MLflow</span>
+            <span class="stack-chip">Drift Detection</span>
+            <span class="stack-chip">CI/CD</span>
+          </div>
+          <a class="project-link" href="https://github.com/mananthakris/mlops-continuous-training-monitoring" target="_blank" rel="noopener">
+            View repository <span class="arrow">→</span>
+          </a>
+        </article>
+
+        <article class="project-card">
+          <span class="project-tag">Multi-Agent · Orchestration</span>
+          <h4>BRD &amp; System Plan Generator</h4>
+          <p>
+            A multi-agent system that turns a natural-language product idea into a structured business requirements document and corresponding system design plan. Specialized agents collaborate across requirements gathering, architecture, and review, modeling how a real product team thinks.
+          </p>
+          <div class="project-stack">
+            <span class="stack-chip">LangGraph</span>
+            <span class="stack-chip">Multi-Agent</span>
+            <span class="stack-chip">A2A</span>
+            <span class="stack-chip">LLM Tools</span>
+          </div>
+          <a class="project-link" href="https://github.com/mananthakris/brd-system-plan-generator" target="_blank" rel="noopener">
+            View repository <span class="arrow">→</span>
+          </a>
+        </article>
+
+        <article class="project-card">
+          <span class="project-tag">Multi-Agent · Domain Expert</span>
+          <h4>College Planner</h4>
+          <p>
+            A multi-agent college admission planner that gives high schoolers tailored advice on application strategy, school fit, and timelines. Agents specialize across academic profile review, school matching, and planning, coordinated through structured tool use.
+          </p>
+          <div class="project-stack">
+            <span class="stack-chip">Python</span>
+            <span class="stack-chip">Agents</span>
+            <span class="stack-chip">Tool Use</span>
+            <span class="stack-chip">RAG</span>
+          </div>
+          <a class="project-link" href="https://github.com/mananthakris/college-planner" target="_blank" rel="noopener">
+            View repository <span class="arrow">→</span>
+          </a>
+        </article>
+
+        <article class="project-card">
+          <span class="project-tag">RAG · Embeddings Fine-Tuning</span>
+          <h4>ShopTalk Search Assistant</h4>
+          <p>
+            An e-commerce search assistant combining NLP, RAG, and natural language generation for intent-aware product discovery. Includes embedding fine-tuning to improve retrieval relevance for domain-specific commerce queries, the core problem behind production-grade RAG.
+          </p>
+          <div class="project-stack">
+            <span class="stack-chip">RAG</span>
+            <span class="stack-chip">Embeddings</span>
+            <span class="stack-chip">Fine-Tuning</span>
+            <span class="stack-chip">Jupyter</span>
+          </div>
+          <a class="project-link" href="https://github.com/mananthakris/shoptalk-search-assistant" target="_blank" rel="noopener">
+            View repository <span class="arrow">→</span>
+          </a>
+        </article>
+
+      </div>
+    </section>
+
+    <section class="section reveal" id="themes">
+      <div class="section-label">
+        <span class="num">04</span>
+        <span>Themes</span>
+        <span class="rule"></span>
+        <span>Ideas I keep returning to</span>
+      </div>
+
+      <h2 class="section-title">
+        The questions <em>worth chasing</em>.
+      </h2>
+      <p class="section-intro">
+        Three threads run through most of what I build and write. They're less "areas of expertise" and more "things I keep wanting to understand better."
+      </p>
+
+      <div class="themes">
+        <div class="theme">
+          <h4>AI as engineering, not demos</h4>
+          <p>
+            The gap between an LLM prototype and a system that holds up in production is mostly engineering: evaluation harnesses, retrieval quality, agent boundaries, observability. Most of my project work is about closing that gap and learning what production-grade actually looks like for AI.
+          </p>
+        </div>
+
+        <div class="theme">
+          <h4>Architecture meets organization</h4>
+          <p>
+            System design and org design are the same problem viewed from different angles. The boundaries you draw between services tend to mirror the boundaries you draw between teams, and the inverse. I'm interested in how to design both well, especially as AI changes what either should look like.
+          </p>
+        </div>
+
+        <div class="theme">
+          <h4>Pragmatism over orthodoxy</h4>
+          <p>
+            I don't believe in pre-optimizing for scale, and I don't believe in retrofitting trends into systems that don't need them. The interesting question is always: <em>what's the right level of durability for the phase we're in?</em> That tension shows up in every project here.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section reveal" id="writing">
+      <div class="section-label">
+        <span class="num">05</span>
+        <span>Writing</span>
+        <span class="rule"></span>
+        <span>Coming soon</span>
+      </div>
+
+      <div class="teaser">
+        <div class="teaser-tag">Newsletter · Launching soon</div>
+        <h3>
+          Notes on building <em>engineering organizations</em> in the age of applied AI.
+        </h3>
+        <p>
+          Essays for engineering leaders navigating org design, AI delivery, platform durability, and the real tradeoffs behind production-grade systems. No frameworks-as-content. Just what I'm actually learning as I build.
+        </p>
+        <a class="btn btn-light" href="#connect">
+          Get notified <span class="arrow">→</span>
+        </a>
+      </div>
+    </section>
+
+    <section class="connect reveal" id="connect">
+      <div class="section-label">
+        <span class="num">06</span>
+        <span>Connect</span>
+        <span class="rule"></span>
+        <span>Say hello</span>
+      </div>
+
+      <h2>
+        Find me <em>around the internet.</em>
+      </h2>
+      <p class="connect-intro">
+        I'm always up for a conversation about applied AI, engineering leadership, or the messy interesting space where the two collide.
+      </p>
+
+      <div class="connect-links">
+        <a class="connect-link" href="https://github.com/mananthakris" target="_blank" rel="noopener">
+          <span class="label">GitHub</span>
+          <span class="value">github.com/mananthakris</span>
+        </a>
+        <a class="connect-link" href="https://www.linkedin.com/in/mananthakris/" target="_blank" rel="noopener">
+          <span class="label">LinkedIn</span>
+          <span class="value">linkedin.com/in/mananthakris</span>
+        </a>
+        <a class="connect-link" href="#writing">
+          <span class="label">Newsletter</span>
+          <span class="value">Coming soon</span>
+        </a>
+      </div>
+
+      <footer>
+        <span>© 2026 Malathi Ananthakrishnan</span>
+        <span>Built with care · Austin, TX</span>
+      </footer>
+    </section>
+  </div>
+
+  <script>
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -60px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
