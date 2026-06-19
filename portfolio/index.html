@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Applied AI Engineering — Malathi Ananthakrishnan</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #111110;
+      --surface: #1a1918;
+      --surface2: #1f1e1c;
+      --border: #2a2927;
+      --border-light: #222120;
+      --text: #e8e4dc;
+      --muted: #7a7570;
+      --muted2: #5a5550;
+      --accent: #c8a96e;
+      --accent-dim: #8a6e3e;
+      --tag-bg: #1e1d1b;
+      --tag-text: #8a8580;
+      --eval-bg: #161814;
+      --eval-border: #252820;
+      --card-hover: #161514;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Georgia', 'Times New Roman', serif;
+      font-size: 17px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(17,17,16,0.94);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px; height: 56px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    nav .brand {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px; letter-spacing: 0.03em;
+      color: var(--muted); text-decoration: none;
+    }
+    nav .brand span { color: var(--text); }
+    nav .nav-links { display: flex; gap: 24px; list-style: none; }
+    nav .nav-links a {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px; color: var(--muted); text-decoration: none;
+      letter-spacing: 0.03em; transition: color 0.2s;
+    }
+    nav .nav-links a:hover { color: var(--text); }
+
+    /* ── Layout ── */
+    .container { max-width: 860px; margin: 0 auto; padding: 0 40px; }
+
+    /* ── Hero ── */
+    .hero { padding: 88px 0 64px; border-bottom: 1px solid var(--border); }
+    .hero-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 22px;
+    }
+    .hero h1 {
+      font-size: clamp(32px, 5vw, 50px); font-weight: normal;
+      line-height: 1.2; letter-spacing: -0.02em;
+      color: var(--text); margin-bottom: 24px;
+    }
+    .hero h1 em { font-style: italic; color: var(--accent); }
+    .hero-body { font-size: 16px; color: var(--muted); max-width: 600px; line-height: 1.8; }
+    .hero-body strong { color: var(--text); font-weight: normal; }
+    .hero-meta {
+      margin-top: 32px; display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    }
+    .hero-meta a {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px; color: var(--muted); text-decoration: none;
+      letter-spacing: 0.03em; border-bottom: 1px solid var(--border);
+      padding-bottom: 2px; transition: color 0.2s, border-color 0.2s;
+    }
+    .hero-meta a:hover { color: var(--text); border-color: var(--muted); }
+    .hero-meta .sep { color: var(--border); }
+
+    /* ── Section intro ── */
+    .section-intro { padding: 64px 0 0; }
+    .section-num {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px; font-weight: 500; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted2); margin-bottom: 8px;
+    }
+    .section-intro h2 {
+      font-size: 26px; font-weight: normal; letter-spacing: -0.01em; color: var(--text);
+    }
+    .section-intro h2 em { font-style: italic; color: var(--accent); }
+    .section-intro p {
+      margin-top: 10px; font-size: 14px; color: var(--muted); max-width: 520px;
+    }
+
+    /* ════════════════════════════
+       PROJECT CARDS — COMPACT
+       ════════════════════════════ */
+    .projects-list { margin-top: 36px; display: flex; flex-direction: column; gap: 2px; }
+
+    .project-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .project-card:hover { border-color: var(--muted2); }
+    .project-card.open { border-color: var(--accent-dim); }
+
+    /* ── Compact summary row ── */
+    .card-summary {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 20px;
+      align-items: center;
+      padding: 22px 28px;
+      cursor: pointer;
+      background: var(--surface);
+      user-select: none;
+      transition: background 0.15s;
+    }
+    .card-summary:hover { background: var(--card-hover); }
+    .project-card.open .card-summary { background: var(--surface2); }
+
+    .card-num {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 12px; font-weight: 500; color: var(--muted2);
+      letter-spacing: 0.08em; width: 24px;
+    }
+    .project-card.open .card-num { color: var(--accent); }
+
+    .card-main { min-width: 0; }
+
+    .card-meta {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+    .card-category {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted2);
+    }
+    .eval-badge {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 10px; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      background: rgba(200,169,110,0.08);
+      border: 1px solid rgba(200,169,110,0.2);
+      border-radius: 3px; padding: 1px 7px;
+    }
+    .work-badge {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 10px; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      background: var(--tag-bg);
+      border: 1px solid var(--border);
+      border-radius: 3px; padding: 1px 7px;
+    }
+
+    .card-title {
+      font-size: 17px; font-weight: normal; color: var(--text);
+      letter-spacing: -0.01em; margin-bottom: 4px;
+    }
+
+    .card-problem {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px; color: var(--muted); line-height: 1.55;
+    }
+
+    .card-tags {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px;
+    }
+    .card-tag {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px; color: var(--tag-text);
+      background: var(--tag-bg); border: 1px solid var(--border-light);
+      border-radius: 3px; padding: 2px 8px;
+    }
+
+    /* Toggle button */
+    .card-toggle {
+      display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+    }
+    .toggle-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 12px; color: var(--muted); letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+    .toggle-icon {
+      width: 28px; height: 28px;
+      border: 1px solid var(--border); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 14px;
+      transition: transform 0.3s, border-color 0.2s, color 0.2s;
+      flex-shrink: 0;
+    }
+    .project-card.open .toggle-icon {
+      transform: rotate(45deg);
+      border-color: var(--accent-dim); color: var(--accent);
+    }
+
+    /* ════════════════════════════
+       PROJECT DETAIL — EXPANDED
+       ════════════════════════════ */
+    .card-detail {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 36px 28px 40px;
+      background: var(--bg);
+    }
+    .project-card.open .card-detail { display: block; }
+
+    /* Animate open */
+    .project-card.open .card-detail {
+      animation: slideDown 0.25s ease;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 640px) {
+      .detail-grid { grid-template-columns: 1fr; gap: 24px; }
+      nav { padding: 0 20px; }
+      .container { padding: 0 20px; }
+      .card-summary { padding: 18px 20px; gap: 14px; }
+      .card-detail { padding: 24px 20px 28px; }
+      .toggle-label { display: none; }
+    }
+
+    .col-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted2); margin-bottom: 16px;
+    }
+
+    /* Architecture list */
+    .arch-list { list-style: none; }
+    .arch-list li {
+      padding: 12px 0; border-bottom: 1px solid var(--border-light);
+    }
+    .arch-list li:first-child { padding-top: 0; }
+    .arch-list li:last-child { border-bottom: none; }
+    .arch-list li strong {
+      display: block; font-size: 12px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 600; color: var(--text); letter-spacing: 0.01em; margin-bottom: 4px;
+    }
+    .arch-list li span { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+    /* Eval block */
+    .eval-block {
+      background: var(--eval-bg); border: 1px solid var(--eval-border);
+      border-radius: 7px; padding: 22px;
+    }
+    .eval-platform {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 14px;
+    }
+    .eval-items { list-style: none; }
+    .eval-items li {
+      font-size: 13px; color: var(--muted);
+      padding: 8px 0; border-bottom: 1px solid var(--border-light);
+      line-height: 1.55; display: flex; gap: 10px; align-items: flex-start;
+    }
+    .eval-items li:last-child { border-bottom: none; }
+    .eval-items li::before { content: '→'; color: var(--accent-dim); flex-shrink: 0; }
+    .eval-note {
+      margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border-light);
+      font-size: 12px; color: var(--muted2); line-height: 1.6; font-style: italic;
+    }
+
+    /* Stack row */
+    .stack-row {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .stack-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted2);
+    }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 11px; background: var(--tag-bg); color: var(--tag-text);
+      border: 1px solid var(--border-light); border-radius: 3px; padding: 2px 9px;
+    }
+
+    /* Project links */
+    .detail-footer { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .project-link {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px; color: var(--accent); text-decoration: none;
+      letter-spacing: 0.03em; border-bottom: 1px solid var(--accent-dim);
+      padding-bottom: 2px; transition: opacity 0.2s;
+    }
+    .project-link:hover { opacity: 0.7; }
+    .project-link-muted {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px; color: var(--muted); letter-spacing: 0.03em;
+    }
+
+    /* Director signal */
+    .director-signal {
+      margin-top: 28px; padding: 18px 22px;
+      background: var(--surface); border-left: 3px solid var(--accent-dim);
+      border-radius: 0 5px 5px 0;
+    }
+    .director-signal-label {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--accent-dim); margin-bottom: 7px;
+    }
+    .director-signal p { font-size: 13px; color: var(--muted); line-height: 1.65; }
+    .director-signal p strong { color: var(--text); font-weight: normal; }
+
+    /* ── Closing ── */
+    .closing {
+      margin-top: 80px; padding: 64px 0;
+      border-top: 1px solid var(--border);
+    }
+    .closing h2 {
+      font-size: 26px; font-weight: normal;
+      letter-spacing: -0.01em; color: var(--text); margin-bottom: 18px;
+    }
+    .closing h2 em { font-style: italic; color: var(--accent); }
+    .closing p {
+      font-size: 15px; color: var(--muted); max-width: 560px;
+      line-height: 1.8; margin-bottom: 30px;
+    }
+    .closing-links { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-primary {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px; font-weight: 500; letter-spacing: 0.03em;
+      color: var(--bg); background: var(--accent);
+      border: 1px solid var(--accent); padding: 10px 20px;
+      border-radius: 5px; text-decoration: none; transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-secondary {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px; letter-spacing: 0.03em; color: var(--muted);
+      border: 1px solid var(--border); padding: 10px 20px;
+      border-radius: 5px; text-decoration: none;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .btn-secondary:hover { color: var(--text); border-color: var(--muted); }
+
+    /* ── Footer ── */
+    footer { border-top: 1px solid var(--border); padding: 28px 0; }
+    footer .inner {
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    footer p {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 12px; color: var(--muted); letter-spacing: 0.03em;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<!-- ── Navigation ── -->
+<nav>
+  <a class="brand" href="https://mananthakris.github.io/">
+    M. Ananthakrishnan <span>· Applied AI Portfolio</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="https://mananthakris.github.io/#about">About</a></li>
+    <li><a href="https://github.com/mananthakris" target="_blank">GitHub ↗</a></li>
+    <li><a href="https://www.linkedin.com/in/mananthakris/" target="_blank">LinkedIn ↗</a></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="container">
+    <p class="hero-label">Director of Engineering · Applied AI</p>
+    <h1>AI systems built to<br>hold up <em>in production.</em></h1>
+    <p class="hero-body">
+      Four systems spanning agentic orchestration, document intelligence, production RAG, and enterprise AI at work.
+      The thread across all of them: <strong>evaluation as an engineering discipline</strong> — named platforms, measurable signal, improvement loops that run before and after every change.
+    </p>
+    <div class="hero-meta">
+      <a href="https://mananthakris.github.io/">← Back to notebook</a>
+      <span class="sep">·</span>
+      <a href="https://github.com/mananthakris" target="_blank">GitHub</a>
+      <span class="sep">·</span>
+      <a href="https://www.linkedin.com/in/mananthakris/" target="_blank">LinkedIn</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Section intro ── -->
+<section class="section-intro">
+  <div class="container">
+    <p class="section-num">Projects · 2025–2026</p>
+    <h2>Four systems. <em>Four eval stories.</em></h2>
+    <p>Click any project to expand the architecture and evaluation detail.</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════
+     PROJECT LIST
+     ════════════════════════════════════ -->
+<div style="padding: 28px 0 0;">
+<div class="container">
+<div class="projects-list">
+
+
+  <!-- ── PROJECT 1: BRD Multi-Agent ── -->
+  <div class="project-card" id="p1">
+    <div class="card-summary" onclick="toggle('p1')">
+      <span class="card-num">01</span>
+      <div class="card-main">
+        <div class="card-meta">
+          <span class="card-category">Multi-Agent Systems</span>
+          <span class="eval-badge">Arize Phoenix</span>
+        </div>
+        <div class="card-title">BRD → Engineering System Plan Generator</div>
+        <div class="card-problem">Given any Business Requirements Document, produce a decision-ready engineering plan with competing architectural options — grounded in the company's actual stack, constraints, and team capabilities.</div>
+        <div class="card-tags">
+          <span class="card-tag">LangGraph</span>
+          <span class="card-tag">Multi-Agent</span>
+          <span class="card-tag">LLM-as-Judge</span>
+          <span class="card-tag">Offline + Online Evals</span>
+          <span class="card-tag">HITL</span>
+        </div>
+      </div>
+      <div class="card-toggle">
+        <span class="toggle-label">Details</span>
+        <span class="toggle-icon">+</span>
+      </div>
+    </div>
+
+    <div class="card-detail">
+      <div class="detail-grid">
+        <div>
+          <p class="col-label">Architecture &amp; Key Decisions</p>
+          <ul class="arch-list">
+            <li>
+              <strong>LangGraph hub-and-spoke with typed GraphState</strong>
+              <span>Six specialized agents wired through a single Pydantic state object — making the data contract between agents explicit and testable. The Orchestrator never pre-fetches context; each agent issues its own retrieval query tuned to its specific task.</span>
+            </li>
+            <li>
+              <strong>Critic drives a revision loop, not a re-run</strong>
+              <span>The Critic scores all upstream outputs on five dimensions. If revision_required and revision_count &lt; MAX_CYCLES, the graph loops back with revision notes — preserving state rather than re-running the full pipeline. That distinction matters for cost and latency at scale.</span>
+            </li>
+            <li>
+              <strong>Problem classification gates the graph</strong>
+              <span>Solution Architect classifies each BRD as greenfield / new_feature / migration / integration / poc / enhancement before any design work. This single field controls downstream agent behavior — PoC Planner only runs when warranted.</span>
+            </li>
+            <li>
+              <strong>Versioned prompt registry</strong>
+              <span>All agent system prompts live in a registry with semantic version tags. Every eval run is tagged with prompt versions, enabling before/after score comparison without manual bookkeeping.</span>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p class="col-label">Eval Story · Arize Phoenix</p>
+          <div class="eval-block">
+            <p class="eval-platform">Offline + Online · Arize Phoenix</p>
+            <ul class="eval-items">
+              <li>4 golden BRDs (Arbor Risk, a fictional fraud-detection platform) with ground-truth expectations — rule-based structural checks run instantly, LLM-as-judge rubrics run per agent</li>
+              <li>Per-agent rubrics: brd_coverage, phase_coherence, classification_accuracy, existing_stack_preference, feedback_specificity</li>
+              <li>OpenInference AGENT spans stream live traces to Phoenix UI — per-agent input/output visible in production, not just end-to-end</li>
+              <li>Prompt change workflow: edit registry → bump version → re-run evals → compare side-by-side. A CLI diff script means no Phoenix UI required for the score delta.</li>
+            </ul>
+            <p class="eval-note">Per-agent evaluation — not end-to-end vibe checks — is the only way to know which agent is responsible when output degrades. That's an architectural position as much as a technical one.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack-row">
+        <span class="stack-label">Stack</span>
+        <div class="tags">
+          <span class="tag">LangGraph</span><span class="tag">Multi-Agent</span>
+          <span class="tag">Arize Phoenix</span><span class="tag">LLM-as-Judge</span>
+          <span class="tag">ChromaDB</span><span class="tag">FastAPI</span>
+          <span class="tag">React + Vite</span><span class="tag">OpenAI</span>
+          <span class="tag">Pydantic</span><span class="tag">SQLite Checkpointer</span>
+          <span class="tag">HITL</span><span class="tag">Python 3.12</span>
+        </div>
+      </div>
+
+      <div class="detail-footer">
+        <a class="project-link" href="https://github.com/mananthakris/brd-system-plan-generator" target="_blank">GitHub → brd-system-plan-generator</a>
+      </div>
+
+      <div class="director-signal">
+        <p class="director-signal-label">What this demonstrates</p>
+        <p>Multi-agent systems fail silently in ways monolithic LLM calls don't. <strong>The bet here was to invest in per-agent observability before optimizing anything</strong> — so when output quality changes, the signal tells you which agent moved, not just that something moved. That's how I think about building AI teams and AI systems: instrument first, then improve.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── PROJECT 2: Document Intelligence ── -->
+  <div class="project-card" id="p2">
+    <div class="card-summary" onclick="toggle('p2')">
+      <span class="card-num">02</span>
+      <div class="card-main">
+        <div class="card-meta">
+          <span class="card-category">Applied AI at Work</span>
+          <span class="eval-badge">Vertex AI</span>
+          <span class="work-badge">Production</span>
+        </div>
+        <div class="card-title">Document Intelligence Pipeline — Mechanical Drawings Extraction</div>
+        <div class="card-problem">Onboarding coordinators were manually reading mechanical drawings and transcribing building specifications into data systems — a slow, error-prone bottleneck that scaled with every new facility.</div>
+        <div class="card-tags">
+          <span class="card-tag">Vertex AI</span>
+          <span class="card-tag">Document AI</span>
+          <span class="card-tag">Fine-Tuning</span>
+          <span class="card-tag">Structured Extraction</span>
+          <span class="card-tag">GCP</span>
+        </div>
+      </div>
+      <div class="card-toggle">
+        <span class="toggle-label">Details</span>
+        <span class="toggle-icon">+</span>
+      </div>
+    </div>
+
+    <div class="card-detail">
+      <div class="detail-grid">
+        <div>
+          <p class="col-label">Architecture &amp; Key Decisions</p>
+          <ul class="arch-list">
+            <li>
+              <strong>Fine-tuned on proprietary document samples</strong>
+              <span>Mechanical drawings have non-standard layouts — dimension annotations, title blocks, revision clouds — that off-the-shelf document AI models aren't trained to handle. Fine-tuning on internal samples was the right call over prompt engineering an inadequate base model.</span>
+            </li>
+            <li>
+              <strong>Vertex AI for data residency and fine-tune control</strong>
+              <span>Proprietary building documents couldn't leave the enterprise boundary. Vertex AI Document AI provided native fine-tuning without requiring document samples to be sent to third-party training infrastructure.</span>
+            </li>
+            <li>
+              <strong>Structured output mapped to existing data schema</strong>
+              <span>Extracted fields (equipment specs, dimensions, system types, building codes) were normalized to match the existing onboarding data model — eliminating re-mapping and making the pipeline a drop-in replacement for the manual step, not a parallel system to reconcile.</span>
+            </li>
+            <li>
+              <strong>Human-in-the-loop on low-confidence extractions</strong>
+              <span>Below a confidence threshold, extractions were flagged for coordinator review rather than auto-populated. This preserved accuracy while still eliminating the majority of manual work — and gave coordinators a correction signal that fed back into fine-tuning iterations.</span>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p class="col-label">Eval Story · Extraction Quality</p>
+          <div class="eval-block">
+            <p class="eval-platform">Document Extraction · Precision / Recall</p>
+            <ul class="eval-items">
+              <li>Field-level precision and recall measured against a held-out set of manually verified drawings — not a synthetic test set created after training</li>
+              <li>Confidence threshold calibrated against coordinator correction rate — the threshold that minimized total coordinator time, not the one that maximized raw accuracy</li>
+              <li>Correction feedback loop: coordinator edits on flagged extractions fed into subsequent fine-tuning rounds</li>
+              <li>Outcome: measurable reduction in time for onboarding coordinators filling building data — removing the manual transcription step from the critical path</li>
+            </ul>
+            <p class="eval-note">The right metric here wasn't model accuracy — it was coordinator time saved. That distinction shaped every threshold and architecture decision in the pipeline.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack-row">
+        <span class="stack-label">Stack</span>
+        <div class="tags">
+          <span class="tag">Vertex AI</span><span class="tag">Document AI</span>
+          <span class="tag">Fine-Tuning</span><span class="tag">GCP</span>
+          <span class="tag">Python</span><span class="tag">Structured Extraction</span>
+          <span class="tag">HITL Review</span>
+        </div>
+      </div>
+
+      <div class="detail-footer">
+        <span class="project-link-muted">Work Project · Production · PropTech / Facilities</span>
+      </div>
+
+      <div class="director-signal">
+        <p class="director-signal-label">What this demonstrates</p>
+        <p>This is the category of AI project that has the clearest ROI and the least glamour: <strong>identify the manual step on the critical path, replace it with something that holds up under production load, and measure the right thing</strong> — coordinator time, not model accuracy. Finding and shipping that kind of high-leverage internal AI problem is a leadership skill as much as a technical one.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── PROJECT 3: ShopTalk RAG ── -->
+  <div class="project-card" id="p3">
+    <div class="card-summary" onclick="toggle('p3')">
+      <span class="card-num">03</span>
+      <div class="card-main">
+        <div class="card-meta">
+          <span class="card-category">Production RAG · Embeddings Fine-Tuning</span>
+          <span class="eval-badge">IR Metrics</span>
+        </div>
+        <div class="card-title">ShopTalk — Natural Language Product Search</div>
+        <div class="card-problem">Keyword search fails on conversational product queries. The real question behind every e-commerce search team: how far do off-the-shelf embeddings get you, and when does fine-tuning actually pay?</div>
+        <div class="card-tags">
+          <span class="card-tag">RAG</span>
+          <span class="card-tag">Embeddings Fine-Tuning</span>
+          <span class="card-tag">Recall@10 · NDCG@10</span>
+          <span class="card-tag">Cross-Encoder Reranking</span>
+          <span class="card-tag">GCP Cloud Run</span>
+        </div>
+      </div>
+      <div class="card-toggle">
+        <span class="toggle-label">Details</span>
+        <span class="toggle-icon">+</span>
+      </div>
+    </div>
+
+    <div class="card-detail">
+      <div class="detail-grid">
+        <div>
+          <p class="col-label">Architecture &amp; Key Decisions</p>
+          <ul class="arch-list">
+            <li>
+              <strong>Three-model comparison before fine-tuning</strong>
+              <span>Evaluated multiple pre-trained embedding models on Recall@10 and NDCG@10 before fine-tuning any of them. e5-base won. The model selection decision was measurement-driven — not assumption-driven.</span>
+            </li>
+            <li>
+              <strong>Triplet loss fine-tuning for domain specificity</strong>
+              <span>Product search queries have different semantic structure than general text. Triplet loss training on (query, positive product, negative product) triplets closed the gap that off-the-shelf embeddings leave for commerce-specific language. Published as mananthakris/e5-base-ft-abo on Hugging Face.</span>
+            </li>
+            <li>
+              <strong>Cross-encoder reranking as a deliberate second pass</strong>
+              <span>Bi-encoder retrieval is fast but imprecise at the top of the ranking. Cross-encoder reranking over the top-K candidates applies the compute budget where ranking quality matters most — query-by-query relevance judgment, not bulk retrieval.</span>
+            </li>
+            <li>
+              <strong>Production-grade deployment on GCP Cloud Run</strong>
+              <span>Containerized API + UI, GitHub Actions CI/CD, ChromaDB locally and Weaviate Cloud in production. VectorDB abstraction layer routes transparently between environments. 145K+ products indexed.</span>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p class="col-label">Eval Story · IR Retrieval Metrics</p>
+          <div class="eval-block">
+            <p class="eval-platform">Retrieval Quality · Recall@10 · NDCG@10</p>
+            <ul class="eval-items">
+              <li>Recall@10 used to gate model selection before any fine-tuning compute — established which base model was worth improving</li>
+              <li>NDCG@10 measured ranking quality, penalizing relevant results that appear lower in the list — not just whether they appear at all</li>
+              <li>Fine-tuning gains validated against baseline e5-base on a held-out query set not used during training</li>
+              <li>Published fine-tuned model: mananthakris/e5-base-ft-abo — reproducible, inspectable, reusable</li>
+            </ul>
+            <p class="eval-note">Retrieval eval came first, drove model choice, then validated fine-tuning gains. Measurement → decision → measurement — not the other way around.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack-row">
+        <span class="stack-label">Stack</span>
+        <div class="tags">
+          <span class="tag">RAG</span><span class="tag">e5-base</span>
+          <span class="tag">Triplet Loss Fine-Tuning</span><span class="tag">Cross-Encoder</span>
+          <span class="tag">ChromaDB</span><span class="tag">Weaviate Cloud</span>
+          <span class="tag">FastAPI</span><span class="tag">Streamlit</span>
+          <span class="tag">Docker</span><span class="tag">GCP Cloud Run</span>
+          <span class="tag">GitHub Actions</span><span class="tag">Hugging Face</span>
+        </div>
+      </div>
+
+      <div class="detail-footer">
+        <a class="project-link" href="https://github.com/mananthakris/shoptalk-search-assistant" target="_blank">GitHub → shoptalk-search-assistant</a>
+        <a class="project-link" href="https://huggingface.co/mananthakris/e5-base-ft-abo" target="_blank">Model on Hugging Face ↗</a>
+      </div>
+
+      <div class="director-signal">
+        <p class="director-signal-label">What this demonstrates</p>
+        <p>Most RAG demos stop at cosine similarity over off-the-shelf embeddings. <strong>This project is about what comes after: knowing your retrieval metrics, knowing when pre-trained embeddings aren't enough, and having the discipline to fine-tune against real query distributions.</strong> The distance between a RAG demo and a RAG product is mostly engineering rigor — this is where that shows up.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── PROJECT 4: Enterprise Chatbot ── -->
+  <div class="project-card" id="p4">
+    <div class="card-summary" onclick="toggle('p4')">
+      <span class="card-num">04</span>
+      <div class="card-main">
+        <div class="card-meta">
+          <span class="card-category">Applied AI at Work</span>
+          <span class="eval-badge">LangSmith</span>
+          <span class="work-badge">Production</span>
+        </div>
+        <div class="card-title">Enterprise Chatbot — Evolving a Production System with RAG and Evals</div>
+        <div class="card-problem">An internal enterprise chatbot with tool-calling was falling short on knowledge-heavy queries. The fix wasn't a new model. It was the right retrieval layer — and the discipline to know when it was actually working.</div>
+        <div class="card-tags">
+          <span class="card-tag">RAG</span>
+          <span class="card-tag">Tool Calling</span>
+          <span class="card-tag">LangSmith</span>
+          <span class="card-tag">Answer Faithfulness</span>
+          <span class="card-tag">Retrieval Evals</span>
+        </div>
+      </div>
+      <div class="card-toggle">
+        <span class="toggle-label">Details</span>
+        <span class="toggle-icon">+</span>
+      </div>
+    </div>
+
+    <div class="card-detail">
+      <div class="detail-grid">
+        <div>
+          <p class="col-label">Architecture &amp; Key Decisions</p>
+          <ul class="arch-list">
+            <li>
+              <strong>RAG added as a first-class tool, not a replacement</strong>
+              <span>Rather than replacing the tool-calling layer, RAG was integrated as one more tool in the agent's decision space — letting the LLM route queries dynamically between live-action tools and retrieval-backed knowledge, depending on what the query actually needed.</span>
+            </li>
+            <li>
+              <strong>Retrieval pipeline calibrated against real query distributions</strong>
+              <span>Chunking strategy, embedding model, and re-ranking were chosen and iterated against actual user query patterns — not synthetic benchmarks. Enterprise queries are domain-specific; general benchmarks don't predict field performance.</span>
+            </li>
+            <li>
+              <strong>Eval infrastructure before prompt optimization</strong>
+              <span>LangSmith tracing was wired in before any prompt tuning began. Every retrieval call, tool invocation, and LLM output was captured — making improvement measurable rather than intuitive. Prompt changes without a corresponding eval run were treated as untested deploys.</span>
+            </li>
+          </ul>
+        </div>
+        <div>
+          <p class="col-label">Eval Story · LangSmith</p>
+          <div class="eval-block">
+            <p class="eval-platform">Production Evals · LangSmith</p>
+            <ul class="eval-items">
+              <li>Retrieval quality tracked per query type: tool-answered, RAG-answered, and hybrid — understanding which path the LLM was choosing and whether it was choosing correctly</li>
+              <li>Answer faithfulness scored against retrieved context, not model confidence — a model can be confidently wrong</li>
+              <li>End-to-end trace logging connected prompt changes to outcome deltas, making each iteration's effect visible</li>
+              <li>Dataset of real user queries used to regression-test each retrieval iteration before deploying to production</li>
+            </ul>
+            <p class="eval-note">The policy change that mattered most: prompt changes without a corresponding eval run were treated as untested deploys. That norm came before any of the tooling did.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="stack-row">
+        <span class="stack-label">Stack</span>
+        <div class="tags">
+          <span class="tag">LangChain</span><span class="tag">RAG</span>
+          <span class="tag">Tool Calling</span><span class="tag">LangSmith</span>
+          <span class="tag">Vector DB</span><span class="tag">OpenAI</span>
+          <span class="tag">Python</span>
+        </div>
+      </div>
+
+      <div class="detail-footer">
+        <span class="project-link-muted">Work Project · Production</span>
+      </div>
+
+      <div class="director-signal">
+        <p class="director-signal-label">What this demonstrates</p>
+        <p>This is what applied AI leadership looks like in an existing organization: <strong>taking a live production system and improving it systematically, without rebuilding it.</strong> The decision to treat evals as a prerequisite to optimization — not a follow-on — reflects a broader engineering norm: you don't optimize what you can't measure. That applies to systems and teams.</p>
+      </div>
+    </div>
+  </div>
+
+
+</div><!-- /projects-list -->
+</div><!-- /container -->
+</div>
+
+<!-- ── Closing ── -->
+<section class="closing">
+  <div class="container">
+    <h2>Let's talk about <em>what you're building.</em></h2>
+    <p>
+      I'm looking for a Director of Engineering role at an applied AI or AI-native company — remote or hybrid Austin —
+      where the interesting problem is getting AI systems from prototype to production and keeping them honest once they're there.
+      20 years building distributed systems and the organizations that ship them.
+      Currently: multi-agent systems, production RAG, document intelligence, and the eval infrastructure that makes all of it trustworthy.
+    </p>
+    <div class="closing-links">
+      <a class="btn-primary" href="https://www.linkedin.com/in/mananthakris/" target="_blank">Connect on LinkedIn</a>
+      <a class="btn-secondary" href="https://mananthakris.github.io/">Back to notebook</a>
+      <a class="btn-secondary" href="https://github.com/mananthakris" target="_blank">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="container">
+    <div class="inner">
+      <p>Malathi Ananthakrishnan · Austin, TX · Applied AI &amp; Engineering Leadership</p>
+      <p><a href="https://mananthakris.github.io/">mananthakris.github.io</a></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggle(id) {
+    const card = document.getElementById(id);
+    const isOpen = card.classList.contains('open');
+
+    // Close all cards
+    document.querySelectorAll('.project-card.open').forEach(c => c.classList.remove('open'));
+
+    // If it wasn't open, open it
+    if (!isOpen) {
+      card.classList.add('open');
+      // Scroll card into view with a little breathing room
+      setTimeout(() => {
+        const top = card.getBoundingClientRect().top + window.scrollY - 72;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }, 50);
+    }
+  }
+</script>
+
+</body>
+</html>
